@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const morgan = require('morgan');
 
 const AdminRouter = require('./lib/routes/AdminRouter');
 const ApiRouter = require('./lib/routes/ApiRouter');
@@ -14,6 +15,7 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
+app.use(morgan('tiny'));
 // --------------------Control which can access our web port----------------------
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -28,4 +30,4 @@ app.use('/api', ApiRouter);
 app.use('/user', UserRouter);
 app.use('/admin', AdminRouter);
 
-app.listen(8080, () => global.console.log('magic happens at 8080'));
+app.listen(3000, () => global.console.log('magic happens at 3000'));
