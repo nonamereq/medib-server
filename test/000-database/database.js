@@ -4,10 +4,13 @@ const expect = require('chai').expect;
 const sinon = require('sinon');
 
 const Event = require('../../lib/models/event');
+const Bet   = require('../../lib/models/bet');
 
 const common = require('../../lib/common');
 
 let User;
+
+//Complete path testing
 
 describe('All database tests', function(){
     before(function(done){
@@ -26,8 +29,6 @@ describe('All database tests', function(){
 
     after(function(done){
         mongoose.connection.dropDatabase((err) => {
-            if(err)
-                console.log(err.message());
             mongoose.connection.close();
             done();
         });
@@ -202,22 +203,87 @@ describe('All database tests', function(){
                             done();
                         });
                     });
+                    it('#User.validators: should return user name must be greater than 4 characters', function(done) {
+                        let u = new User({
+                            name: 'moc',
+                            password: 'password',
+                        });
+                        u.save((err) => {
+                            expect(err.errors.name.message).to.equal('User name must be greater than or equal to 4 characters');
+                            done();
+                        });
+                    });
+                    it('#User.validators: should return user name must be alphanumeric characters', function(done) {
+                        let u = new User({
+                            name: 'moc$Aadaf',
+                            password: 'password',
+                        });
+                        u.save((err) => {
+                            expect(err.errors.name.message).to.equal('User name must only include alphanumeric characters');
+                            done();
+                        });
+                    });
+                    it('#User.validators: should return password must be greater than 6 characters', function(done) {
+                        let u = new User({
+                            name: 'moc',
+                            password: 'pass',
+                        });
+                        u.save((err) => {
+                            expect(err.errors.password.message).to.equal('Password must be greater than or equal to 6 characters');
+                            done();
+                        });
+                    });
+                    it('#User.validators: should return amount must be greater than 0', function(done) {
+                        let u = new User({
+                            amount: -100
+                        });
+                        u.save((err) => {
+                            expect(err.errors.amount.message).to.equal('Amount must be greater than or equal to 0');
+                            done();
+                        });
+                    });
                 });
 
-                it('#User.pre("save"): should save', function(done){
-                    sinon.stub(common, 'hashValue').withArgs('password').returns('password2');
-                    let u = new User({
-                        name: 'mock_test',
-                        email: 'mock@m.com',
-                        password: 'password'
+                describe('#User.pre("save"): should save', function(){
+                    before(() => {
+                        sinon.stub(common, 'hashValue').withArgs('password').returns('password2');
                     });
-
-                    u.save((err, doc) => {
-                        expect(doc.password).to.equal('password2');
+                    after(() => {
                         common.hashValue.restore();
-                        done();
+                    });
+                    it('#User.pre("save"): should save', function(done){
+                        let u = new User({
+                            name: 'mock_test',
+                            email: 'mock@m.com',
+                            password: 'password'
+                        });
+
+                        u.save((err, doc) => {
+                            expect(doc.password).to.equal('password2');
+                            done();
+                        });
                     });
                 });
+
+                describe('#User.comparePassword: test', function(){
+                    before(function(){
+                        let stub = sinon.stub(common, 'hashValue');
+                        stub.withArgs('password').returns('password2');
+                        stub.withArgs('123456').returns('124');
+                    });
+                    after(function(){
+                        common.hashValue.restore();
+                    });
+                    it('#User.comparePassword: test', function(){
+                        let user = new User({
+                            password: 'password2'
+                        });
+
+                        expect(user.comparePassword('password')).to.be.true;
+                        expect(user.comparePassword('123456')).to.be.false;
+                    });
+                });
+
             });
 
             describe('#Event model tests', function() {
@@ -234,6 +300,31 @@ describe('All database tests', function(){
                             expect(err.errors.closingTime.message).to.equal('The event time must be greater than the current time + 5 minutes');
                             done();
                         });
+                    });
+                });
+            });
+
+            describe('#Bet model tests',function(){
+                it('#Bet: validator should fail', function(done){
+                    let bet = new Bet({});
+                    bet.save((err) => {
+                        expect(err.name).to.equal('ValidationError');
+                        expect(err.errors).to.have.property('event_id');
+                        expect(err.errors).to.have.property('team_name');
+                        expect(err.errors).to.have.property('user_id');
+                        expect(err.errors).to.have.property('bet_amount');
+                        expect(err.errors.event_id.message).to.equal('You have to choose an event');
+                        done();
+                    });
+                });
+                it('#Bet: validator should fail', function(done){
+                    let bet = new Bet({
+                        bet_amount: -100
+                    });
+                    bet.save((err) => {
+                        expect(err.errors).to.have.property('bet_amount');
+                        expect(err.errors.bet_amount.message).to.equal('Bet amount must be greater than 0');
+                        done();
                     });
                 });
             });
