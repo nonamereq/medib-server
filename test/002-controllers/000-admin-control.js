@@ -127,7 +127,7 @@ describe('#AdminController module: Test Controllers', function(){
                 expect(obj.success).to.be.false;
                 expect(obj.err).to.be.an('object');
                 expect(obj.err.message).to.equal('No such event');
-                expect(obj.status).to.equal(200);
+                expect(obj.status).to.equal(400);
                 done();
             };
 
@@ -204,7 +204,7 @@ describe('#AdminController module: Test Controllers', function(){
                 expect(obj.success).to.be.false;
                 expect(obj.err).to.be.an('object');
                 expect(obj.err.message).to.equal('No such event');
-                expect(obj.status).to.equal(200);
+                expect(obj.status).to.equal(400);
                 done();
             };
 

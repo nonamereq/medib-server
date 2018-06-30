@@ -81,7 +81,7 @@ describe('#Authenticator module: Test Autenticators', function(){
                 this.res.on('end', () => {
                     try {
                         let resJson = JSON.parse(this.res._getData());
-                        expect(resJson.err.message).to.be.equal('You need to log in');
+                        expect(resJson.err.message).to.be.equal('User must be logged in');
                         expect(this.res.statusCode).to.be.equal(401);
                         done();
                     } catch (error) {
@@ -98,7 +98,7 @@ describe('#Authenticator module: Test Autenticators', function(){
                 this.res.on('end', () => {
                     try {
                         let resJson = JSON.parse(this.res._getData());
-                        expect(resJson.err.message).to.be.equal('You need to log in');
+                        expect(resJson.err.message).to.be.equal('User must be logged in');
                         expect(this.res.statusCode).to.be.equal(401);
                         done();
                     } catch (error) {

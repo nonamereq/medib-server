@@ -133,7 +133,7 @@ describe('#BetController module: Test Controllers', function(){
             bet.subtractAmount(1000, subtractAmountCallback);
         });
 
-        it.skip('#BetController.subtractAmount: succeceds', function(done){
+        it('#BetController.subtractAmount: succeceds', function(done){
             let subtractAmountCallback = (obj) => {
                 expect(obj.success).to.be.true;
                 expect(obj.err).to.be.undefined;
@@ -184,7 +184,7 @@ describe('#BetController module: Test Controllers', function(){
                 done();
             };
 
-            this.userUpdateStub.yields(null);
+            this.userUpdateStub.yields(null, {});
 
             bet.addAmount(1000, addAmountCallback);
         });
@@ -250,7 +250,7 @@ describe('#BetController module: Test Controllers', function(){
             let betCallback = (obj) => {
                 expect(obj.err).to.be.an('object');
                 expect(obj.success).to.be.false;
-                expect(obj.status).to.be.equal(200);
+                expect(obj.status).to.be.equal(400);
                 expect(obj.err.message).to.be.equal('No such event');
                 done();
             };
@@ -374,7 +374,7 @@ describe('#BetController module: Test Controllers', function(){
             let cashOutCallback = (obj) => {
                 expect(obj.err).to.be.an('object');
                 expect(obj.err.message).to.be.equal('User does not have a sufficent amount');
-                expect(obj.status).to.equal(200);
+                expect(obj.status).to.equal(400);
                 expect(obj.success).to.be.false;
                 BetController.prototype.hasSufficentAmount.restore();
                 done();

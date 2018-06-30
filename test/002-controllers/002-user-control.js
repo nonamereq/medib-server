@@ -143,7 +143,7 @@ describe('#UserController module: Test Controllers', function(){
 
         it('#UserController.signup: should save the user', function(done) {
             let signUpController = (obj) => {
-                expect(obj.err).to.be.null;
+                expect(obj.err).to.be.undefined;
                 expect(obj.status).to.equal(200);
                 expect(obj.success).to.be.true;
                 done();
