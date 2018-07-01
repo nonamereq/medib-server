@@ -1,6 +1,6 @@
 const Event = require('../lib/models/event');
 
-let minuteBegin = 24*60*60;
+let minuteBegin = 10;
 
 (new Event({
     team1_name: 'team11',
@@ -10,7 +10,7 @@ let minuteBegin = 24*60*60;
     closingTime: Date.now() + (minuteBegin*60*1000)
 })).save();
 
-minuteBegin = 0.5;
+minuteBegin += 0.5;
 
 (new Event({
     team1_name: 'team12',
